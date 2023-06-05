@@ -12,8 +12,12 @@ import com.example.minhasanotacoes.databinding.ActivityMainBinding;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
+
+    private AnotacaoPreferencias preferencias;
+    private EditText editAnotacao;
 
     private AppBarConfiguration appBarConfiguration;
 private ActivityMainBinding binding;
@@ -31,14 +35,29 @@ private ActivityMainBinding binding;
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
+        editAnotacao = findViewById(R.id.editAnotacao);
+
+        preferencias = new AnotacaoPreferencias(getApplicationContext());
+
         binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                String textoRecuperado = editAnotacao.getText().toString();
+                if (textoRecuperado.equals("")){
+                    Snackbar.make(view, "Preencha a anotação!", Snackbar.LENGTH_LONG).show();
+                }else {
+                    preferencias.salvarAnotacao(textoRecuperado);
+                    Snackbar.make(view, "Anotação salva com sucesso!", Snackbar.LENGTH_LONG).show();
+                }
             }
         });
+
+        String anotacao = preferencias.recuperarAnotacao();
+        if (!anotacao.equals("")){
+            editAnotacao.setText(anotacao);
+        }
     }
+
 @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
